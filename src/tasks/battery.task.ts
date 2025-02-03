@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { SchedulerRegistry } from '@nestjs/schedule';
+import { Cron, SchedulerRegistry } from '@nestjs/schedule';
 import { DroneRepository } from '../drones/drones.repository';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class BatteryTask {
     private schedulerRegistry: SchedulerRegistry
   ) {}
 
-  @Cron('*/15 * * * *') // Every 15 minutes
+  @Cron('*/15 * * * *')
   async handleBatteryCheck() {
     const drones = await this.droneRepository.find();
     drones.forEach(drone => {

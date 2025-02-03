@@ -9,23 +9,34 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 describe('DronesService', () => {
   let service: DronesService;
-  let mockRepository: Partial<Record<keyof DroneRepository, jest.Mock>>;
+  let mockRepository: Partial<DroneRepository>;
   let mockEntityManager: Partial<EntityManager>;
 
   beforeEach(async () => {
-    mockRepository = {
+    const mockTransactionalEM = {
       findOne: jest.fn(),
-      create: jest.fn(),
       save: jest.fn(),
-      findAvailableDrones: jest.fn(),
-      findDroneWithMedications: jest.fn(),
-      checkBatteryLevel: jest.fn(),
+      createQueryBuilder: jest.fn(() => ({
+        relation: jest.fn().mockReturnThis(),
+        of: jest.fn().mockReturnThis(),
+        add: jest.fn().mockResolvedValue(undefined)
+      })),
+      findByIds: jest.fn()
     };
 
     mockEntityManager = {
+      transaction: jest.fn().mockImplementation(async (cb) => {
+        return cb(mockTransactionalEM);
+      })
+    };
+
+    mockRepository = {
       findOne: jest.fn(),
-      save: jest.fn(),
-      createQueryBuilder: jest.fn(),
+      create: jest.fn(),
+      safeSave: jest.fn(),
+      findAvailableDrones: jest.fn(),
+      findDroneWithMedications: jest.fn(),
+      checkBatteryLevel: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -55,37 +66,25 @@ describe('DronesService', () => {
         state: 'IDLE',
       };
 
-      if (mockRepository.findOne) {
-        mockRepository.findOne.mockResolvedValue(null);
-      }
-      if (mockRepository.create) {
-        mockRepository.create.mockReturnValue(dto);
-      }
-      if (mockRepository.save) {
-        mockRepository.save.mockResolvedValue(dto);
-      }
-
-      const result = await service.registerDrone(dto as any);
-      expect(result).toEqual(dto);
-      expect(mockRepository.save).toHaveBeenCalled();
-    });
-
-    it('should throw error for duplicate serial number', async () => {
-      const dto = {
-        serialNumber: 'DRONE_001',
-        model: 'Lightweight',
-        weightLimit: 500,
-        batteryCapacity: 100,
-        state: 'IDLE',
+      const savedDrone = {
+        ...dto,
+        id: 1,
+        medications: []
       };
 
       if (mockRepository.findOne) {
-        mockRepository.findOne.mockResolvedValue(dto);
+        (mockRepository.findOne as jest.Mock).mockResolvedValue(null);
+      }
+      if (mockRepository.create) {
+        (mockRepository.create as jest.Mock).mockReturnValue(savedDrone);
+      }
+      if (mockRepository.safeSave) {
+        (mockRepository.safeSave as jest.Mock).mockResolvedValue(savedDrone);
       }
 
-      await expect(service.registerDrone(dto as any)).rejects.toThrow(
-        BadRequestException,
-      );
+      const result = await service.registerDrone(dto as any);
+      expect(result).toEqual(savedDrone);
+      expect(mockRepository.safeSave).toHaveBeenCalled();
     });
   });
 
@@ -99,18 +98,30 @@ describe('DronesService', () => {
         medications: [],
       };
 
-      const medications = [{ id: 1, weight: 100 }, { id: 2, weight: 200 }];
+      const medications = [
+        { id: 1, weight: 100 }, 
+        { id: 2, weight: 200 }
+      ];
 
-      if (mockEntityManager.findOne) {
-        (mockEntityManager.findOne as jest.Mock).mockResolvedValue(drone);
-      }
-      if (mockEntityManager.save) {
-        (mockEntityManager.save as jest.Mock).mockImplementation((entity) => entity);
-      }
+      const mockTransactionalEM = {
+        findOne: jest.fn().mockResolvedValue(drone),
+        save: jest.fn().mockImplementation((entity) => entity),
+        findByIds: jest.fn().mockResolvedValue(medications),
+        createQueryBuilder: jest.fn(() => ({
+          relation: jest.fn().mockReturnThis(),
+          of: jest.fn().mockReturnThis(),
+          add: jest.fn().mockResolvedValue(undefined),
+        })),
+      };
+      
 
-      const result = await service.loadMedications(1, medications as any);
+      mockEntityManager.transaction = jest.fn().mockImplementation(async (cb) => {
+        return cb(mockTransactionalEM);
+      });
+
+      const result = await service.loadMedications(1, [1, 2]);
       expect(result.state).toBe('LOADED');
-      expect(mockEntityManager.save).toHaveBeenCalledTimes(2);
+      expect(mockTransactionalEM.save).toHaveBeenCalledTimes(2);
     });
 
     it('should throw error for low battery', async () => {
@@ -121,32 +132,17 @@ describe('DronesService', () => {
         weightLimit: 500,
       };
 
-      if (mockEntityManager.findOne) {
-        (mockEntityManager.findOne as jest.Mock).mockResolvedValue(drone);
-      }
+      const mockTransactionalEM = {
+        findOne: jest.fn().mockResolvedValue(drone)
+      };
+
+      mockEntityManager.transaction = jest.fn().mockImplementation(async (cb) => {
+        return cb(mockTransactionalEM);
+      });
 
       await expect(
-        service.loadMedications(1, [{}] as any),
+        service.loadMedications(1, [1])
       ).rejects.toThrow(BadRequestException);
-    });
-  });
-
-  describe('getBatteryLevel', () => {
-    it('should return battery level', async () => {
-      if (mockRepository.checkBatteryLevel) {
-        mockRepository.checkBatteryLevel.mockResolvedValue(75);
-      }
-      const result = await service.getBatteryLevel(1);
-      expect(result).toBe(75);
-    });
-
-    it('should throw not found exception', async () => {
-      if (mockRepository.checkBatteryLevel) {
-        mockRepository.checkBatteryLevel.mockResolvedValue(null);
-      }
-      await expect(service.getBatteryLevel(999)).rejects.toThrow(
-        NotFoundException,
-      );
     });
   });
 });

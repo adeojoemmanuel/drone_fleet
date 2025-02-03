@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:13-alpine
@@ -38,7 +36,6 @@ services:
       sh -c "npm run migration:run && npm run start:prod"
     volumes:
       - .:/usr/src/app
-      - /usr/src/app/node_modules
 
 volumes:
   pgdata:
