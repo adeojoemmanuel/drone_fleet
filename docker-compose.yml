@@ -2,32 +2,43 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:13
+    image: postgres:13-alpine
+    container_name: drone_db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: drones
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   app:
     build: .
+    container_name: drone_api
     ports:
-      - '3000:3000'
+      - "3000:3000"
     environment:
+      NODE_ENV: production
+      PORT: 3000
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
       DB_NAME: drones
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     command: >
-      sh -c "npm run build && 
-      npx typeorm migration:run -d src/config/typeorm.config.ts && 
-      npm run start:prod"
-      
+      sh -c "npm run migration:run && npm run start:prod"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
 volumes:
   pgdata:
