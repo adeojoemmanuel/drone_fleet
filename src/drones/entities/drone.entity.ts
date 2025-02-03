@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { Medication } from '../../medications/entities/medication.entity';
+import { Medication } from './medication.entity';
 
 export enum DroneModel {
   Lightweight = 'Lightweight',

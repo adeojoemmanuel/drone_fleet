@@ -14,11 +14,11 @@ import {
     ApiBody,
     ApiParam,
   } from '@nestjs/swagger';
-  import { DronesService } from '../drones.service';
-  import { CreateDroneDto } from '../dto/create-drone.dto';
-  import { LoadMedicationDto } from '../dto/load-medication.dto';
-  import { Drone } from '../entities/drone.entity';
-  import { Medication } from '../../medications/entities/medication.entity';
+  import { DronesService } from './drones.service';
+  import { CreateDroneDto } from './dto/create-drone.dto';
+  import { LoadMedicationDto } from './dto/load-medication.dto';
+  import { Drone } from './entities/drone.entity';
+  import { Medication } from './entities/medication.entity';
   
   @ApiTags('Drones')
   @Controller('drones')
