@@ -74,13 +74,19 @@ With Mau, you can deploy your application in just a few clicks, allowing you to 
 ##  Run and Test
 
 ```:bash
-  docker-compose up --build
+$ docker-compose up --build
 ```
 
 Access Swagger UI at: 
 
-```http://localhost:3000/api```
+```bash
+http://localhost:3000/api
+```
+Run Test
 
+```bash
+$ npm test
+```
 
 
 
