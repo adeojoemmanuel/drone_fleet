@@ -1,0 +1,41 @@
+// src/drones/repositories/drones.repository.ts
+import { EntityRepository, Repository } from 'typeorm';
+import { Drone } from '../entities/drone.entity';
+import { DroneState } from '../entities/drone.entity';
+
+@EntityRepository(Drone)
+export class DroneRepository extends Repository<Drone> {
+  async findAvailableDrones(): Promise<Drone[]> {
+    return this.createQueryBuilder('drone')
+      .where('drone.state IN (:...states)', {
+        states: [DroneState.IDLE, DroneState.LOADING],
+      })
+      .andWhere('drone.batteryCapacity >= :minBattery', { minBattery: 25 })
+      .getMany();
+  }
+
+  async findDroneWithMedications(id: number): Promise<Drone> {
+    return this.createQueryBuilder('drone')
+      .leftJoinAndSelect('drone.medications', 'medications')
+      .where('drone.id = :id', { id })
+      .getOne();
+  }
+
+  async checkBatteryLevel(id: number): Promise<number> {
+    const result = await this.createQueryBuilder('drone')
+      .select('drone.batteryCapacity', 'battery')
+      .where('drone.id = :id', { id })
+      .getRawOne();
+      
+    return result?.battery || 0;
+  }
+
+  async safeSave(drone: Drone): Promise<Drone> {
+    return this.manager.transaction(async (transactionalEntityManager) => {
+      if (drone.weightLimit > 500) {
+        throw new Error('Weight limit exceeds maximum allowed');
+      }
+      return transactionalEntityManager.save(Drone, drone);
+    });
+  }
+}
