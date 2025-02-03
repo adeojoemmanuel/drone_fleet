@@ -1,4 +1,3 @@
-// src/drones/controllers/drone.controller.ts
 import {
     Controller,
     Get,

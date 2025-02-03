@@ -1,4 +1,3 @@
-// src/drones/dto/load-medication.dto.ts
 import { IsArray, IsNotEmpty, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 

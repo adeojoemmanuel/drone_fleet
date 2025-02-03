@@ -1,10 +1,14 @@
-// src/drones/repositories/drones.repository.ts
-import { EntityRepository, Repository } from 'typeorm';
-import { Drone } from '../entities/drone.entity';
-import { DroneState } from '../entities/drone.entity';
+import { Injectable } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
+import { Drone } from './entities/drone.entity';
+import { DroneState } from './entities/drone.entity';
 
-@EntityRepository(Drone)
+@Injectable()
 export class DroneRepository extends Repository<Drone> {
+  constructor(private readonly dataSource: DataSource) {
+    super(Drone, dataSource.createEntityManager());
+  }
+
   async findAvailableDrones(): Promise<Drone[]> {
     return this.createQueryBuilder('drone')
       .where('drone.state IN (:...states)', {
@@ -14,7 +18,7 @@ export class DroneRepository extends Repository<Drone> {
       .getMany();
   }
 
-  async findDroneWithMedications(id: number): Promise<Drone> {
+  async findDroneWithMedications(id: number): Promise<Drone | null> {
     return this.createQueryBuilder('drone')
       .leftJoinAndSelect('drone.medications', 'medications')
       .where('drone.id = :id', { id })
@@ -31,7 +35,7 @@ export class DroneRepository extends Repository<Drone> {
   }
 
   async safeSave(drone: Drone): Promise<Drone> {
-    return this.manager.transaction(async (transactionalEntityManager) => {
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
       if (drone.weightLimit > 500) {
         throw new Error('Weight limit exceeds maximum allowed');
       }
