@@ -27,6 +27,13 @@
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Project setup
+# Enviroment
+
+- clone the project git@github.com:adeojoemmanuel/drone_fleet.git
+
+- create a copy of  .env.example file into a new file called .env
+filling out the variables with your local 
+
 
 ```bash
 $ npm install
@@ -34,6 +41,12 @@ $ npm install
 
 ## Compile and run the project
 
+# with Docker
+```bash
+$ docker-compose up
+```
+
+# Run Locally
 ```bash
 # development
 $ npm run start
@@ -44,6 +57,9 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+## Swagger Doc
+![Swagger Documentation](swagger.png)
 
 ## Run tests
 
@@ -57,6 +73,8 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+## Test Snapshot
+![Unit Test Snapshot](u-test.png)
 
 ## Deployment
 

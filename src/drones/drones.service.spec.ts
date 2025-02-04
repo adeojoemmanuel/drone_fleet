@@ -43,7 +43,8 @@ describe('DronesService', () => {
       providers: [
         DronesService,
         {
-          provide: DroneRepository,
+          // Correct the injection token here
+          provide: getRepositoryToken(Drone),
           useValue: mockRepository,
         },
         {
