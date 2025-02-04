@@ -7,7 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { Drone } from './drones/entities/drone.entity';
 import { Medication  } from './drones/entities/medication.entity';
 import { DronesModule } from './drones/drones.module';
-
+import {BatteryAuditLogModule} from './tasks/battery-audit-log.module';
 
 @Module({
   imports: [
@@ -28,6 +28,7 @@ import { DronesModule } from './drones/drones.module';
       migrationsTableName: 'migrations',
     }),
     DronesModule,
+    BatteryAuditLogModule,
   ],
   controllers: [AppController],
   providers: [AppService],

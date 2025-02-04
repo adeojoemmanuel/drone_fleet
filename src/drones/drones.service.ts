@@ -5,7 +5,7 @@ import { Drone } from './entities/drone.entity';
 import { Medication } from './entities/medication.entity';
 import { CreateDroneDto } from './dto/create-drone.dto';
 import { DroneState } from './enums/drone.enum';
-import { EntityManager } from 'typeorm';
+import { EntityManager, MoreThanOrEqual } from 'typeorm';
 
 @Injectable()
 export class DronesService {
@@ -87,6 +87,21 @@ export class DronesService {
 
   async getAvailableDrones(): Promise<Drone[]> {
     return this.droneRepository.findAvailableDrones();
+  }
+
+  async findAvailableDrones(): Promise<Drone[]> {
+    const drones = await this.droneRepository.find({
+      where: [
+        { state: DroneState.IDLE, batteryCapacity: MoreThanOrEqual(25) },
+        { state: DroneState.LOADING, batteryCapacity: MoreThanOrEqual(25) },
+      ],
+      relations: ['medications'],
+    });
+
+    return drones.filter((drone) => {
+      const totalWeight = drone.medications.reduce((sum, m) => sum + m.weight, 0);
+      return totalWeight < drone.weightLimit;
+    });
   }
 
   async getBatteryLevel(droneId: number): Promise<number> {

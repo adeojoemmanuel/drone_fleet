@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, SchedulerRegistry } from '@nestjs/schedule';
 import { DroneRepository } from '../drones/drones.repository';
+import { BatteryAuditLogService } from './battery-audit-log.service';
 
 @Injectable()
 export class BatteryTask {
@@ -8,15 +9,15 @@ export class BatteryTask {
   
   constructor(
     private readonly droneRepository: DroneRepository,
-    private schedulerRegistry: SchedulerRegistry
+    private batteryAuditService: BatteryAuditLogService,
   ) {}
 
   @Cron('*/15 * * * *')
   async handleBatteryCheck() {
     const drones = await this.droneRepository.find();
-    drones.forEach(drone => {
+    await Promise.all(drones.map(async (drone) => {
       this.logger.log(`Drone ${drone.serialNumber} battery: ${drone.batteryCapacity}%`);
-      // Store in audit log (implement repository)
-    });
+      await this.batteryAuditService.createLog(drone.id, drone.batteryCapacity);
+    }));
   }
 }

@@ -26,24 +26,39 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Project setup
-# Enviroment
+# Drone Dispatch Service
 
-- clone the project git@github.com:adeojoemmanuel/drone_fleet.git
+A REST API for managing drones and medication deliveries.
 
-- create a copy of  .env.example file into a new file called .env
+## Requirements
+
+- Docker
+- Node.js
+
+## Setup
+
+1. Clone the repository.
+2. create a copy of  .env.example file into a new file called .env
 filling out the variables with your local 
+3. Install dependencies: `npm install`
+4. Start PostgreSQL with Docker: `docker-compose up -d`
+5. Run the application: `npm run start:dev`
 
+## API Endpoints
 
-```bash
-$ npm install
-```
+- `POST /drones`: Register a new drone.
+- `POST /drones/:id/load`: Load medications onto a drone.
+- `GET /drones/:id/medications`: Get loaded medications for a drone.
+- `GET /drones/available`: Get available drones for loading.
+- `GET /drones/:id/battery`: Get battery level of a drone.
 
-## Compile and run the project
+## Testing
 
-# with Docker
-```bash
-$ docker-compose up
+Run unit tests: `npm run test`
+
+# Run with Docker
+```:bash
+$ docker-compose up --build
 ```
 
 # Run Locally
@@ -59,6 +74,9 @@ $ npm run start:prod
 ```
 
 ## Swagger Doc
+```bash
+http://localhost:3000/api
+```
 ![Swagger Documentation](swagger.png)
 
 ## Run tests
@@ -88,24 +106,6 @@ $ mau deploy
 ```
 
 With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-##  Run and Test
-
-```:bash
-$ docker-compose up --build
-```
-
-Access Swagger UI at: 
-
-```bash
-http://localhost:3000/api
-```
-Run Test
-
-```bash
-$ npm test
-```
-
 
 
 ## Resources
