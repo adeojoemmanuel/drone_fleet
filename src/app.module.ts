@@ -1,10 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { Drone } from './drones/entities/drone.entity';
 import { Medication  } from './drones/entities/medication.entity';
+
+import { DronesController } from './drones/drone.controller';
+import { DronesService } from './drones/drones.service';
 
 @Module({
   imports: [
@@ -25,7 +29,7 @@ import { Medication  } from './drones/entities/medication.entity';
       migrationsTableName: 'migrations',
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, DronesController],
+  providers: [AppService, DronesService],
 })
 export class AppModule {}
