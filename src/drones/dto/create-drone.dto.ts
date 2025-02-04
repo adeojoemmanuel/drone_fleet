@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsNumber, Max, Min } from 'class-validator';
-import { DroneModel, DroneState } from '../entities/drone.entity';
+import { DroneModel, DroneState } from '../enums/drone.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateDroneDto {
