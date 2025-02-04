@@ -17,7 +17,7 @@ import {
 import { DronesService } from './drones.service';
 import { CreateDroneDto } from './dto/create-drone.dto';
 import { LoadMedicationDto } from './dto/load-medication.dto';
-import { Drone } from './entities/drone.entity';
+import { Drones } from './entities/drone.entity';
 import { Medication } from './entities/medication.entity';
 
 @ApiTags('Drones')
@@ -30,7 +30,7 @@ export class DronesController {
   @ApiResponse({ 
     status: 201, 
     description: 'Drone successfully registered',
-    type: Drone,
+    type: Drones,
   })
   @ApiBody({ 
     type: CreateDroneDto,
@@ -48,7 +48,7 @@ export class DronesController {
   })
   async registerDrone(
     @Body() createDroneDto: CreateDroneDto,
-  ): Promise<Drone> {
+  ): Promise<Drones> {
     return this.dronesService.registerDrone(createDroneDto);
   }
 
@@ -57,7 +57,7 @@ export class DronesController {
   @ApiResponse({ 
     status: 200, 
     description: 'Medications successfully loaded',
-    type: Drone,
+    type: Drones,
   })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ 
@@ -73,7 +73,7 @@ export class DronesController {
   async loadMedications(
     @Param('id', ParseIntPipe) id: number,
     @Body() loadMedicationDto: LoadMedicationDto,
-  ): Promise<Drone> {
+  ): Promise<Drones> {
     return this.dronesService.loadMedications(id, loadMedicationDto.medicationIds);
   }
 
@@ -127,7 +127,7 @@ export class DronesController {
       'application/json': {
         schema: {
           type: 'array',
-          items: { $ref: getSchemaPath(Drone) },
+          items: { $ref: getSchemaPath(Drones) },
         },
         examples: {
           example: {
@@ -154,7 +154,7 @@ export class DronesController {
       },
     },
   })
-  async getAvailableDrones(): Promise<Drone[]> {
+  async getAvailableDrones(): Promise<Drones[]> {
     return this.dronesService.getAvailableDrones();
   }
 
@@ -185,7 +185,7 @@ export class DronesController {
       'application/json': {
         schema: {
           type: 'array',
-          items: { $ref: getSchemaPath(Drone) },
+          items: { $ref: getSchemaPath(Drones) },
         },
         examples: {
           example: {
@@ -212,7 +212,7 @@ export class DronesController {
       },
     },
   })
-  async getAllDrones(): Promise<Drone[]> {
+  async getAllDrones(): Promise<Drones[]> {
     return this.dronesService.getAllDrones();
   }
 }

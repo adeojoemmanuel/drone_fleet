@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { Drone } from './drones/entities/drone.entity';
+import { Drones } from './drones/entities/drone.entity';
 import { Medication  } from './drones/entities/medication.entity';
 import { DronesModule } from './drones/drones.module';
 import {BatteryAuditLogModule} from './tasks/battery-audit-log.module';
@@ -21,7 +21,7 @@ import {BatteryAuditLogModule} from './tasks/battery-audit-log.module';
       username: process.env.DB_USERNAME || 'postgres',
       password: process.env.DB_PASSWORD || 'postgres',
       database: process.env.DB_NAME || 'drones',
-      entities: [Drone, Medication],
+      entities: [Drones, Medication],
       autoLoadEntities: true,
       synchronize: false,
       migrations: ['dist/migrations/*.js'],

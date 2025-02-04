@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DronesController } from './drone.controller';
 import { DronesService } from './drones.service';
 import { CreateDroneDto } from './dto/create-drone.dto';
-import { Drone } from './entities/drone.entity';
+import { Drones } from './entities/drone.entity';
 import { LoadMedicationDto } from './dto/load-medication.dto';
 import { NotFoundException } from '@nestjs/common';
 
@@ -36,7 +36,7 @@ describe('DronesController', () => {
   describe('POST /drones', () => {
     it('should create a drone', async () => {
       const dto = new CreateDroneDto();
-      const result = new Drone();
+      const result = new Drones();
       
       jest.spyOn(service, 'registerDrone').mockResolvedValue(result);
 
@@ -49,7 +49,7 @@ describe('DronesController', () => {
     it('should load medications', async () => {
       const dto = new LoadMedicationDto();
       dto.medicationIds = [1, 2];
-      const result = new Drone();
+      const result = new Drones();
       
       jest.spyOn(service, 'loadMedications').mockResolvedValue(result);
 
@@ -60,7 +60,7 @@ describe('DronesController', () => {
 
   describe('GET /drones/available', () => {
     it('should return available drones', async () => {
-      const result = [new Drone()];
+      const result = [new Drones()];
       jest.spyOn(service, 'getAvailableDrones').mockResolvedValue(result);
 
       expect(await controller.getAvailableDrones()).toBe(result);

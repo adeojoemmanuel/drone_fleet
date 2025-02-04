@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Drone } from './entities/drone.entity';
+import { Drones } from './entities/drone.entity';
 import { DronesService } from './drones.service';
 import { DroneRepository } from './drones.repository';
 import { Medication } from './entities/medication.entity';
@@ -44,7 +44,7 @@ describe('DronesService', () => {
         DronesService,
         {
           // Correct the injection token here
-          provide: getRepositoryToken(Drone),
+          provide: getRepositoryToken(Drones),
           useValue: mockRepository,
         },
         {

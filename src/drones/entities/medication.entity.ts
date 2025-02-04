@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { Drone } from '../../drones/entities/drone.entity';
+import { Drones } from '../../drones/entities/drone.entity';
 
 @Entity()
 export class Medication {
@@ -28,6 +28,6 @@ export class Medication {
   @Column()
   image: string;
 
-  @ManyToOne(() => Drone, drone => drone.medications)
-  drone: Drone;
+  @ManyToOne(() => Drones, drone => drone.medications)
+  drone: Drones;
 }

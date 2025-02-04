@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DroneRepository } from './drones.repository';
-import { Drone } from './entities/drone.entity';
+import { Drones } from './entities/drone.entity';
 import { Medication } from './entities/medication.entity';
 import { CreateDroneDto } from './dto/create-drone.dto';
 import { DroneState } from './enums/drone.enum';
@@ -10,12 +10,12 @@ import { EntityManager, MoreThanOrEqual } from 'typeorm';
 @Injectable()
 export class DronesService {
   constructor(
-    @InjectRepository(Drone)
+    @InjectRepository(Drones)
     private readonly droneRepository: DroneRepository,
     private readonly entityManager: EntityManager
   ) {}
 
-  async registerDrone(createDroneDto: CreateDroneDto): Promise<Drone> {
+  async registerDrone(createDroneDto: CreateDroneDto): Promise<Drones> {
     const existing = await this.droneRepository.findOne({
       where: { serialNumber: createDroneDto.serialNumber },
     });
@@ -32,10 +32,10 @@ export class DronesService {
     return this.droneRepository.safeSave(drone);
   }
  
-  async loadMedications(droneId: number, medicationIds: number[]): Promise<Drone> {
+  async loadMedications(droneId: number, medicationIds: number[]): Promise<Drones> {
     return this.entityManager.transaction(async (transactionalEntityManager) => {
       // const drone = await transactionalEntityManager.findOne(Drone, { where: { id: droneId } });
-      const drone = await transactionalEntityManager.findOne(Drone, {
+      const drone = await transactionalEntityManager.findOne(Drones, {
         where: { id: droneId },
         lock: { mode: 'pessimistic_write' },
       });
@@ -69,7 +69,7 @@ export class DronesService {
   
       await transactionalEntityManager
         .createQueryBuilder()
-        .relation(Drone, 'medications')
+        .relation(Drones, 'medications')
         .of(drone)
         .add(medications);
   
@@ -85,11 +85,11 @@ export class DronesService {
     return drone.medications;
   }
 
-  async getAvailableDrones(): Promise<Drone[]> {
+  async getAvailableDrones(): Promise<Drones[]> {
     return this.droneRepository.findAvailableDrones();
   }
 
-  async findAvailableDrones(): Promise<Drone[]> {
+  async findAvailableDrones(): Promise<Drones[]> {
     const drones = await this.droneRepository.find({
       where: [
         { state: DroneState.IDLE, batteryCapacity: MoreThanOrEqual(25) },
@@ -110,7 +110,7 @@ export class DronesService {
     return level;
   }
 
-  async getAllDrones(): Promise<Drone[]> {
+  async getAllDrones(): Promise<Drones[]> {
     return this.droneRepository.find();
   }
 }

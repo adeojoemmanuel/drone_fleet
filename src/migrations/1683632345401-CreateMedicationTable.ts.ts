@@ -5,7 +5,7 @@ export class CreateAndSeedMedication1712345678902 implements MigrationInterface 
 
     // Drop tables in the correct order (medication first to avoid FK constraints)
     // await queryRunner.query(`DROP TABLE IF EXISTS medication CASCADE;`);
-    // await queryRunner.query(`DROP TABLE IF EXISTS drone CASCADE;`);
+    // await queryRunner.query(`DROP TABLE IF EXISTS drones CASCADE;`);
     
     // Creating the medication table
     await queryRunner.query(`
@@ -16,7 +16,7 @@ export class CreateAndSeedMedication1712345678902 implements MigrationInterface 
         "code" VARCHAR NOT NULL, 
         "image" VARCHAR NOT NULL, 
         "droneId" VARCHAR,
-        CONSTRAINT "FK_drone_medication" FOREIGN KEY ("droneId") REFERENCES "drone"("serialNumber") ON DELETE CASCADE
+        CONSTRAINT "FK_drone_medication" FOREIGN KEY ("droneId") REFERENCES "drones"("serialNumber") ON DELETE CASCADE
       );
     `);
 

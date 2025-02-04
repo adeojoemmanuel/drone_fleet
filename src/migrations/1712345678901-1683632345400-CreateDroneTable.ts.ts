@@ -8,7 +8,7 @@ export class SeedDrones1712345678901 implements MigrationInterface {
 
     // Create the drone table if it doesn't exist
     await queryRunner.query(`
-      CREATE TABLE IF NOT EXISTS drone (
+      CREATE TABLE IF NOT EXISTS drones (
         "id" SERIAL PRIMARY KEY,
         "serialNumber" VARCHAR NOT NULL UNIQUE,
         model VARCHAR(255) NOT NULL,
@@ -20,7 +20,7 @@ export class SeedDrones1712345678901 implements MigrationInterface {
 
     // Insert data into the drone table
     await queryRunner.query(`
-      INSERT INTO drone ("serialNumber", model, "weightLimit", "batteryCapacity", state)
+      INSERT INTO drones ("serialNumber", model, "weightLimit", "batteryCapacity", state)
       VALUES 
         ('DRN_1X92L', 'Lightweight', 200, 100, 'IDLE'),
         ('DRN_5T43M', 'Middleweight', 300, 100, 'IDLE'),
@@ -32,7 +32,7 @@ export class SeedDrones1712345678901 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DELETE FROM drone`);
-    await queryRunner.query(`DROP TABLE IF EXISTS drone`);
+    await queryRunner.query(`DELETE FROM drones`);
+    await queryRunner.query(`DROP TABLE IF EXISTS drones`);
   }
 }

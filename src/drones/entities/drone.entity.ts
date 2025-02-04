@@ -3,7 +3,7 @@ import { Medication } from './medication.entity';
 import { DroneModel, DroneState } from '../enums/drone.enum';
 
 @Entity()
-export class Drone {
+export class Drones {
   @PrimaryGeneratedColumn()
   id: number;
 
