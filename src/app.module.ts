@@ -20,7 +20,7 @@ import {BatteryAuditLogModule} from './tasks/battery-audit-log.module';
       port: parseInt(process.env.DB_PORT || '5432', 10),
       username: process.env.DB_USERNAME || 'postgres',
       password: process.env.DB_PASSWORD || 'postgres',
-      database: process.env.DB_NAME || 'drone',
+      database: process.env.DB_NAME || 'drones',
       entities: [Drone, Medication],
       autoLoadEntities: true,
       synchronize: false,

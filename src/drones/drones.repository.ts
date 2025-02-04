@@ -9,7 +9,7 @@ export class DroneRepository extends Repository<Drone> {
   constructor(private readonly dataSource: DataSource) {
     super(Drone, dataSource.createEntityManager());
   }
-
+            
   async findAvailableDrones(): Promise<Drone[]> {
     return this.createQueryBuilder('drone')
       .where('drone.state IN (:...states)', {
