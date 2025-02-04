@@ -5,7 +5,6 @@ export class SeedDrones1712345678901 implements MigrationInterface {
     // Create the drone table if it doesn't exist
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS drone (
-        "id" SERIAL PRIMARY KEY,
         "serialNumber" VARCHAR(255) PRIMARY KEY,
         model VARCHAR(255) NOT NULL,
         "weightLimit" INTEGER NOT NULL,
