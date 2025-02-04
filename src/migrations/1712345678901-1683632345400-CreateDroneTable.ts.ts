@@ -32,7 +32,7 @@ export class SeedDrones1712345678901 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DELETE FROM drone`);
-    await queryRunner.query(`DROP TABLE IF EXISTS drone`);
+    await queryRunner.query(`DELETE FROM drones`);
+    await queryRunner.query(`DROP TABLE IF EXISTS drones`);
   }
 }
