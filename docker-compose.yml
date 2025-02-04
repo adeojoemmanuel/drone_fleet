@@ -32,10 +32,10 @@ services:
       postgres:
         condition: service_healthy
     command: >
-      sh -c "sleep 10 && npx typeorm migration:run -d dist/config/data-source.js && npm run start:prod"
+      sh -c "sleep 10 && npm run build && npx typeorm migration:run -d dist/config/typeorm.config.js && npm run start:prod"
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
+      - .:/app
+      - /app/node_modules
 
 volumes:
   pgdata:
