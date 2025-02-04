@@ -28,7 +28,6 @@ export class CreateAndSeedMedication1712345678902 implements MigrationInterface 
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Dropping the medication table if it exists
     await queryRunner.query(`DROP TABLE IF EXISTS medication`);
   }
 }
