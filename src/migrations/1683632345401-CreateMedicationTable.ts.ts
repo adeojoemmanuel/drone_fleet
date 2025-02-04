@@ -2,6 +2,11 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateAndSeedMedication1712345678902 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+
+    // Drop tables in the correct order (medication first to avoid FK constraints)
+    // await queryRunner.query(`DROP TABLE IF EXISTS medication CASCADE;`);
+    // await queryRunner.query(`DROP TABLE IF EXISTS drone CASCADE;`);
+    
     // Creating the medication table
     await queryRunner.query(`
       CREATE TABLE IF NOT EXISTS medication (
@@ -10,7 +15,7 @@ export class CreateAndSeedMedication1712345678902 implements MigrationInterface 
         "weight" INTEGER NOT NULL, 
         "code" VARCHAR NOT NULL, 
         "image" VARCHAR NOT NULL, 
-        "droneId" VARCHAR(255), 
+        "droneId" INTEGER,
         CONSTRAINT "FK_drone_medication" FOREIGN KEY ("droneId") REFERENCES "drone"("serialNumber") ON DELETE CASCADE
       );
     `);

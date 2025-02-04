@@ -10,7 +10,7 @@ import { EntityManager } from 'typeorm';
 @Injectable()
 export class DronesService {
   constructor(
-    @InjectRepository(DroneRepository)
+    @InjectRepository(Drone)
     private readonly droneRepository: DroneRepository,
     private readonly entityManager: EntityManager
   ) {}

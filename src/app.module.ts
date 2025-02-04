@@ -6,9 +6,8 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { Drone } from './drones/entities/drone.entity';
 import { Medication  } from './drones/entities/medication.entity';
+import { DronesModule } from './drones/drones.module';
 
-import { DronesController } from './drones/drone.controller';
-import { DronesService } from './drones/drones.service';
 
 @Module({
   imports: [
@@ -28,8 +27,9 @@ import { DronesService } from './drones/drones.service';
       migrations: ['dist/migrations/*.js'],
       migrationsTableName: 'migrations',
     }),
+    DronesModule,
   ],
-  controllers: [AppController, DronesController],
-  providers: [AppService, DronesService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
