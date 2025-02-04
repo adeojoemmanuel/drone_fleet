@@ -31,7 +31,7 @@ export class DronesService {
 
     return this.droneRepository.safeSave(drone);
   }
-
+ 
   async loadMedications(droneId: number, medicationIds: number[]): Promise<Drone> {
     return this.entityManager.transaction(async (transactionalEntityManager) => {
       // const drone = await transactionalEntityManager.findOne(Drone, { where: { id: droneId } });
