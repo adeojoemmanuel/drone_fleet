@@ -1,23 +1,23 @@
-# Use Node.js 18 Alpine as base image
-FROM node:18-alpine
+# Use Node.js 22
+FROM node:22-alpine AS builder
 
-# Set the working directory inside the container
 WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm ci --include=dev
 
-# Install dependencies first for efficient Docker caching
-COPY package.json package-lock.json ./
-
-# Install ALL dependencies (including dev dependencies)
-RUN npm install
-
-# Copy the entire project
 COPY . .
-
-# Run the TypeScript build process
 RUN npm run build
 
-# Expose port 3000
+FROM node:22-alpine
+
+WORKDIR /usr/src/app
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/migrations ./migrations
+# COPY --from=builder /usr/src/app/src/config/typeorm.config.ts ./dist/config/data-source.js
+
 EXPOSE 3000
 
-# Start the application in production mode
 CMD ["npm", "run", "start:prod"]

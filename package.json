@@ -6,9 +6,11 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "build": "nest build && cp src/config/data-source.ts dist/config/data-source.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "migration:run": "npx typeorm-ts-node-commonjs migration:run -d src/config/typeorm.config.ts",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:run": "npm run typeorm migration:run -d src/config/typeorm.config.ts",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/config/typeorm.config.ts",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -22,6 +24,7 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.7",
+    "@nestjs/config": "^4.0.0",
     "@nestjs/core": "^11.0.7",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/schedule": "^5.0.1",

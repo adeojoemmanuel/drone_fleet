@@ -1,7 +1,8 @@
+version: '3.8'
+
 services:
   postgres:
-    image: postgres:13-alpine
-    container_name: drone_db
+    image: postgres:15-alpine
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -18,12 +19,10 @@ services:
 
   app:
     build: .
-    container_name: drone_api
     ports:
       - "3000:3000"
     environment:
       NODE_ENV: production
-      PORT: 3000
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USERNAME: postgres
@@ -33,9 +32,10 @@ services:
       postgres:
         condition: service_healthy
     command: >
-      sh -c "npm run migration:run && npm run start:prod"
+      sh -c "sleep 10 && npx typeorm migration:run -d dist/config/data-source.js && npm run start:prod"
     volumes:
       - .:/usr/src/app
+      - /usr/src/app/node_modules
 
 volumes:
   pgdata:
