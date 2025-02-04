@@ -12,7 +12,7 @@ export class BatteryTask {
     private batteryAuditService: BatteryAuditLogService,
   ) {}
 
-  @Cron('*/15 * * * *')
+  @Cron('*60 * * * *')
   async handleBatteryCheck() {
     const drones = await this.droneRepository.find();
     await Promise.all(drones.map(async (drone) => {
