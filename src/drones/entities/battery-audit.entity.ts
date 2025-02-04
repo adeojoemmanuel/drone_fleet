@@ -1,13 +1,13 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Drone } from './drone.entity';
+import { Drones } from './drone.entity';
 
 @Entity()
 export class BatteryAuditLog {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Drone)
-  drone: Drone;
+  @ManyToOne(() => Drones)
+  drone: Drones;
 
   @Column('int')
   batteryLevel: number;
