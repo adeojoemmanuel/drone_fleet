@@ -15,7 +15,7 @@ export class CreateAndSeedMedication1712345678902 implements MigrationInterface 
         "weight" INTEGER NOT NULL, 
         "code" VARCHAR NOT NULL, 
         "image" VARCHAR NOT NULL, 
-        "droneId" INTEGER,
+        "droneId" VARCHAR,
         CONSTRAINT "FK_drone_medication" FOREIGN KEY ("droneId") REFERENCES "drone"("serialNumber") ON DELETE CASCADE
       );
     `);
