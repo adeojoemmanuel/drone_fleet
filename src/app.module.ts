@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { dataSource } from './config/typeorm.config';
 import { ConfigModule } from '@nestjs/config';
 import { Drone } from './drones/entities/drone.entity';
 import { Medication  } from './drones/entities/medication.entity';
+
 @Module({
   imports: [
     ConfigModule.forRoot({

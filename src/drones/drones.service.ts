@@ -4,7 +4,7 @@ import { DroneRepository } from './drones.repository';
 import { Drone } from './entities/drone.entity';
 import { Medication } from './entities/medication.entity';
 import { CreateDroneDto } from './dto/create-drone.dto';
-import { DroneState } from './entities/drone.entity';
+import { DroneState } from './enums/drone.enum';
 import { EntityManager } from 'typeorm';
 
 @Injectable()
