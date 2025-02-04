@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { Drone } from './entities/drone.entity';
-import { DroneState } from './entities/drone.entity';
+import { DroneState } from './enums/drone.enum';
+
 
 @Injectable()
 export class DroneRepository extends Repository<Drone> {
