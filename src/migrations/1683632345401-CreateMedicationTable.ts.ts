@@ -24,11 +24,11 @@ export class CreateAndSeedMedication1712345678902 implements MigrationInterface 
     await queryRunner.query(`
       INSERT INTO medication ("name", "weight", "code", "image", "droneId")
       VALUES
-        ('Aspirin', 50, 'ASPIRIN01', 'aspirin_image_url', (SELECT id FROM drone WHERE "serialNumber" = 'DRN_1X92L')),
-        ('Paracetamol', 100, 'PARA100', 'paracetamol_image_url', (SELECT id FROM drone WHERE "serialNumber" = 'DRN_5T43M')),
-        ('Ibuprofen', 200, 'IBU200', 'ibuprofen_image_url', (SELECT id FROM drone WHERE "serialNumber" = 'DRN_9K76H')),
-        ('Amoxicillin', 150, 'AMOX150', 'amoxicillin_image_url', (SELECT id FROM drone WHERE "serialNumber" = 'DRN_3P29C')),
-        ('Ciprofloxacin', 120, 'CIPRO120', 'ciprofloxacin_image_url', (SELECT id FROM drone WHERE "serialNumber" = 'DRN_7R82L'));
+        ('Aspirin', 50, 'ASPIRIN01', 'aspirin_image_url', (SELECT id FROM drones WHERE "serialNumber" = 'DRN_1X92L')),
+        ('Paracetamol', 100, 'PARA100', 'paracetamol_image_url', (SELECT id FROM drones WHERE "serialNumber" = 'DRN_5T43M')),
+        ('Ibuprofen', 200, 'IBU200', 'ibuprofen_image_url', (SELECT id FROM drones WHERE "serialNumber" = 'DRN_9K76H')),
+        ('Amoxicillin', 150, 'AMOX150', 'amoxicillin_image_url', (SELECT id FROM drones WHERE "serialNumber" = 'DRN_3P29C')),
+        ('Ciprofloxacin', 120, 'CIPRO120', 'ciprofloxacin_image_url', (SELECT id FROM drones WHERE "serialNumber" = 'DRN_7R82L'));
     `);
   }
 
