@@ -10,7 +10,7 @@ import { EntityManager, MoreThanOrEqual } from 'typeorm';
 @Injectable()
 export class DronesService {
   constructor(
-    @InjectRepository(Drones)
+    @InjectRepository(DroneRepository)
     private readonly droneRepository: DroneRepository,
     private readonly entityManager: EntityManager
   ) {}
