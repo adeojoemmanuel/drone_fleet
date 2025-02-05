@@ -38,7 +38,7 @@ export class DronesService {
       const drone = await transactionalEntityManager.createQueryBuilder(Drones, 'drone')
         .leftJoinAndSelect('drone.medications', 'medications')
         .where('drone.id = :id', { id: droneId })
-        .andWhere('medications.id IS NOT NULL') // Ensure medications are present
+        .andWhere('medications.id IS NOT NULL')
         .setLock('pessimistic_write')
         .getOne();
   
