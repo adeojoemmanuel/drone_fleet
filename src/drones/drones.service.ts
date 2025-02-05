@@ -5,7 +5,7 @@ import { Drones } from './entities/drone.entity';
 import { Medication } from './entities/medication.entity';
 import { CreateDroneDto } from './dto/create-drone.dto';
 import { DroneState } from './enums/drone.enum';
-import { EntityManager, MoreThanOrEqual } from 'typeorm';
+import { EntityManager, In, MoreThanOrEqual } from 'typeorm';
 
 @Injectable()
 export class DronesService {
@@ -32,51 +32,77 @@ export class DronesService {
     return this.droneRepository.safeSave(drone);
   }
  
+
   async loadMedications(droneId: number, medicationIds: number[]): Promise<Drones> {
     return this.entityManager.transaction(async (transactionalEntityManager) => {
-      // const drone = await transactionalEntityManager.findOne(Drone, { where: { id: droneId } });
-      const drone = await transactionalEntityManager.findOne(Drones, {
-        where: { id: droneId },
-        lock: { mode: 'pessimistic_write' },
-      });
-      if (!drone) {
-        throw new NotFoundException('Drone not found');
-      }
+      const drone = await transactionalEntityManager.createQueryBuilder(Drones, 'drone')
+        .leftJoinAndSelect('drone.medications', 'medications')
+        .where('drone.id = :id', { id: droneId })
+        .andWhere('medications.id IS NOT NULL') // Ensure medications are present
+        .setLock('pessimistic_write')
+        .getOne();
   
-      if (drone.batteryCapacity < 25) {
-        throw new BadRequestException('Battery level too low for loading');
+      if (!drone) {
+        throw new NotFoundException(`Drone with ID ${droneId} not found.`);
       }
   
       if (drone.state !== DroneState.IDLE && drone.state !== DroneState.LOADING) {
-        throw new BadRequestException('Drone not available for loading');
+        throw new BadRequestException('Drone is not available for loading.');
       }
   
-      const medications = await transactionalEntityManager.findByIds(Medication, medicationIds);
+      if (drone.batteryCapacity < 25) {
+        throw new BadRequestException('Battery level too low for loading.');
+      }
+  
+      const medications = await transactionalEntityManager.find(Medication, {
+        where: { id: In(medicationIds) },
+        relations: ['drone'],
+      });
   
       if (medications.length !== medicationIds.length) {
-        throw new BadRequestException('One or more medications not found');
+        throw new NotFoundException('Some medications not found.');
       }
   
-      const totalWeight = medications.reduce((sum, med) => sum + med.weight, 0);
-      const currentLoad = drone.medications?.reduce((sum, med) => sum + med.weight, 0) || 0;
-  
-      if (currentLoad + totalWeight > drone.weightLimit) {
-        throw new BadRequestException('Total weight exceeds drone capacity');
+      const alreadyAssigned = medications.filter(m => m.drone && m.drone.id !== droneId);
+      if (alreadyAssigned.length > 0) {
+        throw new BadRequestException('Some medications are already assigned to another drone.');
       }
   
-      drone.state = DroneState.LOADING;
-      await transactionalEntityManager.save(drone);
+      const newWeight = medications.reduce((sum, m) => sum + m.weight, 0);
+      const existingWeight = drone.medications.reduce((sum, m) => sum + m.weight, 0);
+      const totalWeight = existingWeight + newWeight;
+  
+      if (totalWeight > drone.weightLimit) {
+        throw new BadRequestException('Total weight exceeds drone capacity.');
+      }
   
       await transactionalEntityManager
         .createQueryBuilder()
-        .relation(Drones, 'medications')
-        .of(drone)
-        .add(medications);
+        .update(Medication)
+        .set({ drone: drone })
+        .where('id IN (:...medicationIds)', { medicationIds })
+        .execute();
   
-      drone.state = DroneState.LOADED;
-      return transactionalEntityManager.save(drone);
+      if (totalWeight === drone.weightLimit) {
+        drone.state = DroneState.LOADED;
+      } else if (drone.state === DroneState.IDLE) {
+        drone.state = DroneState.LOADING;
+      }
+  
+      await transactionalEntityManager.save(Drones, drone);
+  
+      const updatedDrone = await transactionalEntityManager.findOne(Drones, {
+        where: { id: droneId },
+        relations: ['medications'],
+      });
+  
+      if (!updatedDrone) {
+        throw new NotFoundException(`Drone with ID ${droneId} not found.`);
+      }
+  
+      return updatedDrone;
     });
-  }
+  }  
   
 
   async getLoadedMedications(droneId: number): Promise<Medication[]> {

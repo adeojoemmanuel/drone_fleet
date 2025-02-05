@@ -14,7 +14,7 @@ export class SeedDrones1712345678901 implements MigrationInterface {
         "model" VARCHAR(255) NOT NULL,
         "weightLimit" INTEGER NOT NULL,
         "batteryCapacity" INTEGER NOT NULL,
-        state VARCHAR(50) NOT NULL
+        "state" VARCHAR(50) NOT NULL
       );
     `);
 

@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Medication } from './medication.entity';
 import { DroneModel, DroneState } from '../enums/drone.enum';
 
-@Entity()
+@Entity('drones')
 export class Drones {
   @PrimaryGeneratedColumn()
   id: number;
